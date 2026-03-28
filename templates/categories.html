@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Categories</h2>
+
+<div class="row g-3">
+    {% for cat in categories %}
+    <div class="col-md-4">
+        <div class="card {{ '' if cat.active else 'opacity-50' }}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0">{{ cat.name }}</h5>
+                    <form method="post" action="/categories/toggle/{{ cat.id }}">
+                        <button type="submit" class="btn btn-sm {{ 'btn-success' if cat.active else 'btn-outline-secondary' }}">
+                            {{ 'ON' if cat.active else 'OFF' }}
+                        </button>
+                    </form>
+                </div>
+                <span class="badge bg-info">{{ cat.source_type }}</span>
+                <span class="badge bg-secondary">{{ cat.feeds|length }} feeds</span>
+                {% if cat.search_query %}
+                <p class="text-muted small mt-2 mb-0">Search: {{ cat.search_query }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{
+  "categories": [
+    {
+      "name": "Tech",
+      "slug": "tech",
+      "source_type": "rss",
+      "feeds": [
+        {"name": "Hacker News", "url": "https://hnrss.org/frontpage"},
+        {"name": "TechCrunch", "url": "https://techcrunch.com/feed/"},
+        {"name": "The Verge", "url": "https://www.theverge.com/rss/index.xml"},
+        {"name": "Ars Technica", "url": "https://feeds.arstechnica.com/arstechnica/index"}
+      ]
+    },
+    {
+      "name": "World Politics",
+      "slug": "world-politics",
+      "source_type": "rss",
+      "feeds": [
+        {"name": "BBC World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml"},
+        {"name": "Reuters World", "url": "https://www.reutersagency.com/feed/?best-topics=political-general"},
+        {"name": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml"}
+      ]
+    },
+    {
+      "name": "Norwegian News",
+      "slug": "norwegian-news",
+      "source_type": "both",
+      "search_query": "Norway Norwegian news today",
+      "feeds": [
+        {"name": "NRK Toppsaker", "url": "https://www.nrk.no/toppsaker.rss"},
+        {"name": "VG Nyheter", "url": "https://www.vg.no/rss/feed/?categories=nyheter"}
+      ]
+    },
+    {
+      "name": "EU News",
+      "slug": "eu-news",
+      "source_type": "both",
+      "search_query": "European Union EU news today",
+      "feeds": [
+        {"name": "Euronews", "url": "https://www.euronews.com/rss"},
+        {"name": "Politico Europe", "url": "https://www.politico.eu/feed/"}
+      ]
+    },
+    {
+      "name": "Science",
+      "slug": "science",
+      "source_type": "rss",
+      "feeds": [
+        {"name": "Science Daily", "url": "https://www.sciencedaily.com/rss/all.xml"},
+        {"name": "Phys.org", "url": "https://phys.org/rss-feed/"}
+      ]
+    },
+    {
+      "name": "Business",
+      "slug": "business",
+      "source_type": "rss",
+      "feeds": [
+        {"name": "CNBC Top News", "url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"},
+        {"name": "BBC Business", "url": "https://feeds.bbci.co.uk/news/business/rss.xml"}
+      ]
+    },
+    {
+      "name": "Sports",
+      "slug": "sports",
+      "source_type": "rss",
+      "feeds": [
+        {"name": "BBC Sport", "url": "https://feeds.bbci.co.uk/sport/rss.xml"},
+        {"name": "ESPN", "url": "https://www.espn.com/espn/rss/news"}
+      ]
+    },
+    {
+      "name": "Entertainment",
+      "slug": "entertainment",
+      "source_type": "rss",
+      "feeds": [
+        {"name": "Variety", "url": "https://variety.com/feed/"},
+        {"name": "The Hollywood Reporter", "url": "https://www.hollywoodreporter.com/feed/"}
+      ]
+    }
+  ]
+}

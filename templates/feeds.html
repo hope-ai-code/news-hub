@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">RSS Feeds</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5>Add Custom Feed</h5>
+        <form method="post" action="/feeds/add" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">URL</label>
+                <input type="url" name="url" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select name="category_id" class="form-select">
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% for cat in categories %}
+{% if cat.feeds %}
+<h5>{{ cat.name }}</h5>
+<table class="table table-sm mb-4">
+    <thead><tr><th>Feed</th><th>URL</th><th>Type</th><th>Actions</th></tr></thead>
+    <tbody>
+        {% for feed in cat.feeds %}
+        <tr class="{{ '' if feed.active else 'opacity-50' }}">
+            <td>{{ feed.name }}</td>
+            <td class="text-truncate" style="max-width:300px">{{ feed.url }}</td>
+            <td><span class="badge bg-{{ 'secondary' if feed.is_default else 'primary' }}">{{ 'default' if feed.is_default else 'custom' }}</span></td>
+            <td>
+                <form method="post" action="/feeds/toggle/{{ feed.id }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm {{ 'btn-success' if feed.active else 'btn-outline-secondary' }}">
+                        {{ 'ON' if feed.active else 'OFF' }}
+                    </button>
+                </form>
+                {% if not feed.is_default %}
+                <form method="post" action="/feeds/delete/{{ feed.id }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Del</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endfor %}
+{% endblock %}

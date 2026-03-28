@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  news-hub:
+    build: .
+    container_name: news-hub
+    restart: unless-stopped
+    ports:
+      - "2003:5000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=Europe/Oslo

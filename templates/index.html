@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">{{ active_categories }}</h5>
+                <p class="card-text text-muted">Active Categories</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">{{ active_feeds }}</h5>
+                <p class="card-text text-muted">Active Feeds</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">{{ 'Enabled' if telegram_ok else 'Not configured' }}</h5>
+                <p class="card-text text-muted">Telegram</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">{{ pending_articles }}</h5>
+                <p class="card-text text-muted">Pending Articles</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <form method="post" action="/fetch-now" class="d-inline">
+            <button type="submit" class="btn btn-outline-primary me-2">Fetch Now</button>
+        </form>
+        <form method="post" action="/deliver-now" class="d-inline">
+            <button type="submit" class="btn btn-outline-success">Deliver Now</button>
+        </form>
+    </div>
+</div>
+
+{% if schedules %}
+<h5>Scheduled Deliveries</h5>
+<ul class="list-group mb-4">
+    {% for s in schedules %}
+    <li class="list-group-item">{{ s.days_display }} at {{ '%02d:%02d'|format(s.hour, s.minute) }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if recent_logs %}
+<h5>Recent Deliveries</h5>
+<table class="table table-sm">
+    <thead><tr><th>Time</th><th>Articles</th><th>Status</th></tr></thead>
+    <tbody>
+        {% for log in recent_logs %}
+        <tr>
+            <td>{{ log.delivered_at.strftime('%Y-%m-%d %H:%M') if log.delivered_at else '-' }}</td>
+            <td>{{ log.article_count }}</td>
+            <td><span class="badge bg-{{ 'success' if log.status == 'success' else 'danger' }}">{{ log.status }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if recent_articles %}
+<h5>Recent Articles</h5>
+<div class="list-group">
+    {% for a in recent_articles %}
+    <a href="{{ a.url }}" target="_blank" class="list-group-item list-group-item-action">
+        <span class="badge bg-secondary me-2">{{ a.category.name }}</span>
+        {{ a.title }}
+        {% if a.delivered %}<span class="badge bg-success ms-2">sent</span>{% endif %}
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

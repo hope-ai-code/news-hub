@@ -1,0 +1,23 @@
+body {
+    background-color: #1a1a2e;
+    min-height: 100vh;
+}
+.navbar {
+    background-color: #16213e !important;
+}
+.card {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+.table {
+    --bs-table-bg: transparent;
+}
+.list-group-item {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #e5e7eb;
+}
+.list-group-item:hover {
+    background-color: #2d3748;
+    color: #fff;
+}

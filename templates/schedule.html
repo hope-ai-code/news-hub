@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Delivery Schedule</h2>
+
+<div class="card mb-4" style="max-width: 600px;">
+    <div class="card-body">
+        <h5>Add Delivery Slot</h5>
+        <form method="post" action="/schedule/add" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Time</label>
+                <input type="time" name="time" class="form-control" value="08:00" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Days</label>
+                <div>
+                    {% set day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                    {% for i in range(7) %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="days" value="{{ i }}" id="day{{ i }}" checked>
+                        <label class="form-check-label" for="day{{ i }}">{{ day_names[i] }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if slots %}
+<h5>Current Schedule</h5>
+<table class="table table-sm" style="max-width: 600px;">
+    <thead><tr><th>Time</th><th>Days</th><th>Actions</th></tr></thead>
+    <tbody>
+        {% set day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+        {% for slot in slots %}
+        <tr>
+            <td>{{ '%02d:%02d'|format(slot.hour, slot.minute) }}</td>
+            <td>
+                {% for d in slot.days.split(',') %}
+                    {{ day_names[d|int] }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <form method="post" action="/schedule/toggle/{{ slot.id }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm {{ 'btn-success' if slot.active else 'btn-outline-secondary' }}">
+                        {{ 'ON' if slot.active else 'OFF' }}
+                    </button>
+                </form>
+                <form method="post" action="/schedule/delete/{{ slot.id }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Del</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No delivery slots configured yet. Add one above.</p>
+{% endif %}
+{% endblock %}
