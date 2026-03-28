@@ -22,16 +22,16 @@ def run_delivery_cycle(app):
 
     1. Fetch new articles from all active RSS feeds
     2. Run web searches for search-enabled categories
-    3. Send undelivered articles to Telegram
+    3. Send undelivered articles to all enabled delivery channels
     """
     with app.app_context():
         from feeds import fetch_all_feeds
         from searcher import search_all_categories
-        from telegram_bot import deliver_news
+        from delivery import deliver_all_channels
 
         fetch_all_feeds()
         search_all_categories()
-        deliver_news()
+        deliver_all_channels()
 
 
 def rebuild_schedule(app):

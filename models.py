@@ -89,5 +89,49 @@ class DeliveryLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivered_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     article_count = db.Column(db.Integer, default=0)
+    channel = db.Column(db.String(50), default="telegram")  # telegram, email, discord, slack, pushover
     status = db.Column(db.String(20))  # "success" or "error"
     error_message = db.Column(db.Text)
+
+
+class EmailConfig(db.Model):
+    """Singleton row (id=1) holding SMTP email configuration."""
+    id = db.Column(db.Integer, primary_key=True)
+    smtp_host = db.Column(db.String(200))
+    smtp_port = db.Column(db.Integer, default=587)
+    smtp_user = db.Column(db.String(200))
+    smtp_password = db.Column(db.String(200))
+    use_tls = db.Column(db.Boolean, default=True)
+    from_address = db.Column(db.String(200))
+    to_address = db.Column(db.String(200))
+    enabled = db.Column(db.Boolean, default=False)
+
+
+class DiscordConfig(db.Model):
+    """Singleton row (id=1) holding Discord webhook configuration."""
+    id = db.Column(db.Integer, primary_key=True)
+    webhook_url = db.Column(db.String(500))
+    enabled = db.Column(db.Boolean, default=False)
+
+
+class SlackConfig(db.Model):
+    """Singleton row (id=1) holding Slack webhook configuration."""
+    id = db.Column(db.Integer, primary_key=True)
+    webhook_url = db.Column(db.String(500))
+    enabled = db.Column(db.Boolean, default=False)
+
+
+class PushoverConfig(db.Model):
+    """Singleton row (id=1) holding Pushover configuration."""
+    id = db.Column(db.Integer, primary_key=True)
+    app_token = db.Column(db.String(200))
+    user_key = db.Column(db.String(200))
+    enabled = db.Column(db.Boolean, default=False)
+
+
+class RSSOutputConfig(db.Model):
+    """Singleton row (id=1) holding RSS output feed configuration."""
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), default="News Hub Digest")
+    description = db.Column(db.String(500), default="Curated news digest from News Hub")
+    enabled = db.Column(db.Boolean, default=False)

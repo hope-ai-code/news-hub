@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Pushover Configuration</h2>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="post" action="/pushover">
+            <div class="mb-3">
+                <label class="form-label">Application Token</label>
+                <input type="text" name="app_token" class="form-control" value="{{ config.app_token or '' }}" placeholder="Your Pushover app token">
+                <div class="form-text">Create an application at <a href="https://pushover.net/apps/build" target="_blank">pushover.net/apps/build</a></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">User Key</label>
+                <input type="text" name="user_key" class="form-control" value="{{ config.user_key or '' }}" placeholder="Your Pushover user key">
+                <div class="form-text">Found on your <a href="https://pushover.net" target="_blank">Pushover dashboard</a></div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="enabled" class="form-check-input" id="enabled" {{ 'checked' if config.enabled else '' }}>
+                <label class="form-check-label" for="enabled">Enable Pushover delivery</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        <hr>
+        <form method="post" action="/pushover/test">
+            <button type="submit" class="btn btn-outline-secondary">Send Test Notification</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

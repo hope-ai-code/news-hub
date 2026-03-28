@@ -120,14 +120,9 @@ def deliver_news():
         if not ok:
             errors.append(resp)
 
-    # Only mark as delivered if all messages succeeded
-    if not errors:
-        for a in articles:
-            a.delivered = True
-        db.session.commit()
-
     log = DeliveryLog(
         article_count=total,
+        channel="telegram",
         status="success" if not errors else "error",
         error_message="; ".join(errors) if errors else None,
     )

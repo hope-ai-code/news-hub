@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Email Configuration</h2>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="post" action="/email">
+            <div class="mb-3">
+                <label class="form-label">SMTP Host</label>
+                <input type="text" name="smtp_host" class="form-control" value="{{ config.smtp_host or '' }}" placeholder="smtp.gmail.com">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">SMTP Port</label>
+                <input type="number" name="smtp_port" class="form-control" value="{{ config.smtp_port or 587 }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">SMTP Username</label>
+                <input type="text" name="smtp_user" class="form-control" value="{{ config.smtp_user or '' }}" placeholder="user@gmail.com">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">SMTP Password</label>
+                <input type="password" name="smtp_password" class="form-control" value="{{ config.smtp_password or '' }}" placeholder="App password or SMTP password">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="use_tls" class="form-check-input" id="use_tls" {{ 'checked' if config.use_tls else '' }}>
+                <label class="form-check-label" for="use_tls">Use TLS (STARTTLS)</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">From Address</label>
+                <input type="email" name="from_address" class="form-control" value="{{ config.from_address or '' }}" placeholder="newshub@example.com">
+                <div class="form-text">Leave empty to use SMTP username</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">To Address</label>
+                <input type="email" name="to_address" class="form-control" value="{{ config.to_address or '' }}" placeholder="you@example.com">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="enabled" class="form-check-input" id="enabled" {{ 'checked' if config.enabled else '' }}>
+                <label class="form-check-label" for="enabled">Enable email delivery</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        <hr>
+        <form method="post" action="/email/test">
+            <button type="submit" class="btn btn-outline-secondary">Send Test Email</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Slack Configuration</h2>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="post" action="/slack">
+            <div class="mb-3">
+                <label class="form-label">Webhook URL</label>
+                <input type="text" name="webhook_url" class="form-control" value="{{ config.webhook_url or '' }}" placeholder="https://hooks.slack.com/services/T.../B.../...">
+                <div class="form-text">Create an incoming webhook in your Slack workspace: Apps &rarr; Incoming Webhooks</div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="enabled" class="form-check-input" id="enabled" {{ 'checked' if config.enabled else '' }}>
+                <label class="form-check-label" for="enabled">Enable Slack delivery</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        <hr>
+        <form method="post" action="/slack/test">
+            <button type="submit" class="btn btn-outline-secondary">Send Test Message</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

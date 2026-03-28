@@ -22,8 +22,13 @@
     <div class="col-md-3">
         <div class="card text-center">
             <div class="card-body">
-                <h5 class="card-title">{{ 'Enabled' if telegram_ok else 'Not configured' }}</h5>
-                <p class="card-text text-muted">Telegram</p>
+                <h5 class="card-title">{{ enabled_channels|length }}</h5>
+                <p class="card-text text-muted">Active Channels</p>
+                {% if enabled_channels %}
+                <small class="text-success">{{ enabled_channels|join(', ') }}</small>
+                {% else %}
+                <small class="text-warning">None configured</small>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -60,11 +65,12 @@
 {% if recent_logs %}
 <h5>Recent Deliveries</h5>
 <table class="table table-sm">
-    <thead><tr><th>Time</th><th>Articles</th><th>Status</th></tr></thead>
+    <thead><tr><th>Time</th><th>Channel</th><th>Articles</th><th>Status</th></tr></thead>
     <tbody>
         {% for log in recent_logs %}
         <tr>
             <td>{{ log.delivered_at.strftime('%Y-%m-%d %H:%M') if log.delivered_at else '-' }}</td>
+            <td>{{ log.channel or 'telegram' }}</td>
             <td>{{ log.article_count }}</td>
             <td><span class="badge bg-{{ 'success' if log.status == 'success' else 'danger' }}">{{ log.status }}</span></td>
         </tr>

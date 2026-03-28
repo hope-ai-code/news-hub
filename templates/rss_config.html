@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">RSS Output Feed</h2>
+
+<div class="card" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="post" action="/rss-config">
+            <div class="mb-3">
+                <label class="form-label">Feed Title</label>
+                <input type="text" name="title" class="form-control" value="{{ config.title or 'News Hub Digest' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Feed Description</label>
+                <input type="text" name="description" class="form-control" value="{{ config.description or '' }}" placeholder="Curated news digest from News Hub">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="enabled" class="form-check-input" id="enabled" {{ 'checked' if config.enabled else '' }}>
+                <label class="form-check-label" for="enabled">Enable RSS output feed</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        {% if config.enabled %}
+        <hr>
+        <p>Your RSS feed is available at:</p>
+        <code>/feed.xml</code>
+        <p class="form-text mt-2">Add this URL to any RSS reader to subscribe to your News Hub digest.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
