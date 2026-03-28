@@ -1,13 +1,14 @@
-version: '3.8'
-
 services:
   news-hub:
     build: .
     container_name: news-hub
     restart: unless-stopped
     ports:
-      - "2003:5000"
+      - "${NEWS_HUB_PORT:-2003}:5000"
     volumes:
       - ./data:/app/data
+    env_file:
+      - path: .env
+        required: false
     environment:
-      - TZ=Europe/Oslo
+      - TZ=${TZ:-Europe/Oslo}

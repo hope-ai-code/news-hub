@@ -1,3 +1,11 @@
+"""
+News Hub - Self-hosted news aggregation with Telegram delivery.
+
+A lightweight web app that collects news from RSS feeds and web searches,
+lets you organize them by category, and delivers digests to Telegram on
+a configurable schedule.
+"""
+
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
@@ -5,16 +13,29 @@ from models import db, Category, Feed, Article, TelegramConfig, ScheduleSlot, De
 from scheduler import start_scheduler, rebuild_schedule
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////app/data/news_hub.db"
+
+# Use a persistent secret key so sessions survive restarts.
+# Falls back to a random key if SECRET_KEY is not set (sessions reset on restart).
+app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
+
+# Database path is configurable; defaults to a SQLite file in ./data/
+db_path = os.environ.get("DATABASE_URL", "sqlite:////app/data/news_hub.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = db_path
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
 
 def seed_defaults():
+    """Populate the database with default categories and feeds on first run.
+
+    Reads from config/default_feeds.json and creates Category + Feed rows.
+    Also ensures a singleton TelegramConfig row exists.
+    Skips entirely if any categories already exist (i.e., not a fresh database).
+    """
     if Category.query.first():
         return
+
     config_path = os.path.join(os.path.dirname(__file__), "config", "default_feeds.json")
     with open(config_path) as f:
         data = json.load(f)
@@ -27,7 +48,7 @@ def seed_defaults():
             search_query=cat_data.get("search_query"),
         )
         db.session.add(cat)
-        db.session.flush()
+        db.session.flush()  # Get the auto-generated cat.id for feed FK
 
         for feed_data in cat_data.get("feeds", []):
             feed = Feed(
@@ -38,16 +59,20 @@ def seed_defaults():
             )
             db.session.add(feed)
 
+    # Singleton config row for Telegram settings
     if not TelegramConfig.query.get(1):
         db.session.add(TelegramConfig(id=1))
 
     db.session.commit()
 
 
-# --- Routes ---
+# ---------------------------------------------------------------------------
+# Routes
+# ---------------------------------------------------------------------------
 
 @app.route("/")
 def index():
+    """Dashboard showing system status, recent articles, and delivery logs."""
     active_categories = Category.query.filter_by(active=True).count()
     active_feeds = Feed.query.filter_by(active=True).count()
     tg = TelegramConfig.query.get(1)
@@ -55,15 +80,16 @@ def index():
     pending_articles = Article.query.filter_by(delivered=False).count()
     schedules = ScheduleSlot.query.filter_by(active=True).all()
     recent_logs = DeliveryLog.query.order_by(DeliveryLog.delivered_at.desc()).limit(5).all()
-    recent_articles = (
-        Article.query.order_by(Article.fetched_at.desc()).limit(20).all()
-    )
+    recent_articles = Article.query.order_by(Article.fetched_at.desc()).limit(20).all()
 
     day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     for s in schedules:
-        s.days_display = ", ".join(day_names[int(d)] for d in s.days.split(",") if d.strip().isdigit())
+        s.days_display = ", ".join(
+            day_names[int(d)] for d in s.days.split(",") if d.strip().isdigit()
+        )
 
-    return render_template("index.html",
+    return render_template(
+        "index.html",
         active_categories=active_categories,
         active_feeds=active_feeds,
         telegram_ok=telegram_ok,
@@ -76,12 +102,14 @@ def index():
 
 @app.route("/categories")
 def categories():
+    """List all news categories with toggle controls."""
     cats = Category.query.order_by(Category.name).all()
     return render_template("categories.html", categories=cats)
 
 
 @app.route("/categories/toggle/<int:cat_id>", methods=["POST"])
 def toggle_category(cat_id):
+    """Enable or disable a news category."""
     cat = Category.query.get_or_404(cat_id)
     cat.active = not cat.active
     db.session.commit()
@@ -91,12 +119,14 @@ def toggle_category(cat_id):
 
 @app.route("/feeds")
 def feeds():
+    """List all RSS feeds grouped by category, with add/toggle/delete controls."""
     cats = Category.query.order_by(Category.name).all()
     return render_template("feeds.html", categories=cats)
 
 
 @app.route("/feeds/add", methods=["POST"])
 def add_feed():
+    """Add a custom RSS feed URL to a category."""
     name = request.form.get("name", "").strip()
     url = request.form.get("url", "").strip()
     category_id = request.form.get("category_id", type=int)
@@ -112,6 +142,7 @@ def add_feed():
 
 @app.route("/feeds/toggle/<int:feed_id>", methods=["POST"])
 def toggle_feed(feed_id):
+    """Enable or disable a single RSS feed."""
     feed = Feed.query.get_or_404(feed_id)
     feed.active = not feed.active
     db.session.commit()
@@ -120,6 +151,7 @@ def toggle_feed(feed_id):
 
 @app.route("/feeds/delete/<int:feed_id>", methods=["POST"])
 def delete_feed(feed_id):
+    """Remove a custom (non-default) RSS feed."""
     feed = Feed.query.get_or_404(feed_id)
     if not feed.is_default:
         db.session.delete(feed)
@@ -130,6 +162,7 @@ def delete_feed(feed_id):
 
 @app.route("/telegram", methods=["GET", "POST"])
 def telegram():
+    """Configure Telegram bot token and chat ID for news delivery."""
     config = TelegramConfig.query.get(1)
     if not config:
         config = TelegramConfig(id=1)
@@ -149,20 +182,27 @@ def telegram():
 
 @app.route("/telegram/test", methods=["POST"])
 def telegram_test():
+    """Send a test message to verify Telegram configuration."""
     from telegram_bot import send_test_message
+
     ok, msg = send_test_message()
-    flash("Test message sent!" if ok else f"Failed: {msg}", "success" if ok else "danger")
+    flash(
+        "Test message sent!" if ok else f"Failed: {msg}",
+        "success" if ok else "danger",
+    )
     return redirect(url_for("telegram"))
 
 
 @app.route("/schedule")
 def schedule():
+    """View and manage scheduled delivery time slots."""
     slots = ScheduleSlot.query.order_by(ScheduleSlot.hour, ScheduleSlot.minute).all()
     return render_template("schedule.html", slots=slots)
 
 
 @app.route("/schedule/add", methods=["POST"])
 def add_schedule():
+    """Add a new delivery time slot (day + time combination)."""
     time_str = request.form.get("time", "08:00")
     days = request.form.getlist("days")
     if not days:
@@ -180,6 +220,7 @@ def add_schedule():
 
 @app.route("/schedule/toggle/<int:slot_id>", methods=["POST"])
 def toggle_schedule(slot_id):
+    """Enable or disable a delivery time slot."""
     slot = ScheduleSlot.query.get_or_404(slot_id)
     slot.active = not slot.active
     db.session.commit()
@@ -189,6 +230,7 @@ def toggle_schedule(slot_id):
 
 @app.route("/schedule/delete/<int:slot_id>", methods=["POST"])
 def delete_schedule(slot_id):
+    """Remove a delivery time slot."""
     slot = ScheduleSlot.query.get_or_404(slot_id)
     db.session.delete(slot)
     db.session.commit()
@@ -199,8 +241,10 @@ def delete_schedule(slot_id):
 
 @app.route("/fetch-now", methods=["POST"])
 def fetch_now():
+    """Manually trigger fetching of all RSS feeds and web searches."""
     from feeds import fetch_all_feeds
     from searcher import search_all_categories
+
     rss_count = fetch_all_feeds()
     search_count = search_all_categories()
     flash(f"Fetched {rss_count} RSS + {search_count} search articles", "success")
@@ -209,7 +253,9 @@ def fetch_now():
 
 @app.route("/deliver-now", methods=["POST"])
 def deliver_now():
+    """Manually trigger delivery of unread articles to Telegram."""
     from telegram_bot import deliver_news
+
     count, msg = deliver_news()
     if count > 0:
         flash(f"Delivered {count} articles: {msg}", "success")
@@ -218,10 +264,15 @@ def deliver_now():
     return redirect(url_for("index"))
 
 
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
 if __name__ == "__main__":
     os.makedirs(os.path.join(os.path.dirname(__file__), "data"), exist_ok=True)
     with app.app_context():
         db.create_all()
         seed_defaults()
     start_scheduler(app)
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
