@@ -9,7 +9,10 @@ added, removed, or toggled through the web UI.
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-scheduler = BackgroundScheduler(daemon=True)
+scheduler = BackgroundScheduler(
+    daemon=True,
+    job_defaults={"misfire_grace_time": 7200, "coalesce": True},
+)
 
 DAY_MAP = {
     "0": "mon", "1": "tue", "2": "wed",
@@ -24,14 +27,19 @@ def run_delivery_cycle(app):
     2. Run web searches for search-enabled categories
     3. Send undelivered articles to all enabled delivery channels
     """
+    import logging
+    logger = logging.getLogger(__name__)
+
     with app.app_context():
         from feeds import fetch_all_feeds
         from searcher import search_all_categories
         from delivery import deliver_all_channels
 
+        logger.info("Scheduled delivery cycle starting")
         fetch_all_feeds()
         search_all_categories()
-        deliver_all_channels()
+        results = deliver_all_channels()
+        logger.info("Delivery cycle complete: %s", results)
 
 
 def rebuild_schedule(app):

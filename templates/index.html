@@ -1,9 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mb-4">Dashboard</h2>
 
+<!-- Hero Banner -->
+<div class="hero-section">
+    <img src="/static/hero-banner.svg" alt="" class="hero-banner-bg">
+    <div class="hero-content">
+        <img src="/static/logo.svg" alt="News Hub" class="hero-logo">
+        <p class="hero-tagline">Your personal news aggregation and delivery hub</p>
+        <div class="hero-actions">
+            <form method="post" action="/fetch-now" class="d-inline">
+                <button type="submit" class="btn btn-hero-primary">Fetch Now</button>
+            </form>
+            <form method="post" action="/deliver-now" class="d-inline">
+                <button type="submit" class="btn btn-hero-secondary">Deliver Now</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Stat Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
+    <div class="col-md-3 stat-card">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">{{ active_categories }}</h5>
@@ -11,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 stat-card">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">{{ active_feeds }}</h5>
@@ -19,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 stat-card">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">{{ enabled_channels|length }}</h5>
@@ -32,24 +49,13 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 stat-card">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">{{ pending_articles }}</h5>
                 <p class="card-text text-muted">Pending Articles</p>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <form method="post" action="/fetch-now" class="d-inline">
-            <button type="submit" class="btn btn-outline-primary me-2">Fetch Now</button>
-        </form>
-        <form method="post" action="/deliver-now" class="d-inline">
-            <button type="submit" class="btn btn-outline-success">Deliver Now</button>
-        </form>
     </div>
 </div>
 

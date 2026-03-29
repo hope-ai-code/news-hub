@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#7c83ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="10" y="10" width="180" height="180" rx="36" fill="url(#bg)" stroke="url(#accent)" stroke-width="3"/>
+
+  <!-- Newspaper/document shape -->
+  <rect x="45" y="48" width="110" height="104" rx="8" fill="none" stroke="url(#accent)" stroke-width="4"/>
+
+  <!-- Fold line -->
+  <line x1="95" y1="48" x2="95" y2="152" stroke="#7c83ff" stroke-width="2" opacity="0.4"/>
+
+  <!-- Headline bar -->
+  <rect x="58" y="62" width="60" height="8" rx="2" fill="#00d4ff"/>
+
+  <!-- Article lines left column -->
+  <rect x="58" y="78" width="28" height="4" rx="1" fill="#7c83ff" opacity="0.7"/>
+  <rect x="58" y="88" width="28" height="4" rx="1" fill="#7c83ff" opacity="0.5"/>
+  <rect x="58" y="98" width="28" height="4" rx="1" fill="#7c83ff" opacity="0.7"/>
+  <rect x="58" y="108" width="22" height="4" rx="1" fill="#7c83ff" opacity="0.5"/>
+
+  <!-- Article lines right column -->
+  <rect x="105" y="62" width="38" height="4" rx="1" fill="#7c83ff" opacity="0.6"/>
+  <rect x="105" y="72" width="38" height="4" rx="1" fill="#7c83ff" opacity="0.5"/>
+  <rect x="105" y="82" width="38" height="4" rx="1" fill="#7c83ff" opacity="0.7"/>
+  <rect x="105" y="92" width="30" height="4" rx="1" fill="#7c83ff" opacity="0.5"/>
+
+  <!-- Hub circle / broadcast symbol -->
+  <circle cx="120" cy="125" r="14" fill="none" stroke="#00d4ff" stroke-width="3"/>
+  <circle cx="120" cy="125" r="6" fill="#00d4ff"/>
+
+  <!-- Signal arcs -->
+  <path d="M 138 113 A 24 24 0 0 1 138 137" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M 143 108 A 32 32 0 0 1 143 142" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 280" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="40%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <!-- Main gradient background -->
+  <rect width="1200" height="280" fill="url(#heroGrad)"/>
+  <!-- Decorative wave 1 -->
+  <path d="M0 180 Q150 130 300 170 T600 150 T900 180 T1200 140 L1200 280 L0 280 Z" fill="url(#wave1)"/>
+  <!-- Decorative wave 2 -->
+  <path d="M0 220 Q200 180 400 210 T800 190 T1200 220 L1200 280 L0 280 Z" fill="url(#wave2)"/>
+  <!-- Subtle dot pattern -->
+  <circle cx="100" cy="60" r="40" fill="#fff" opacity="0.04"/>
+  <circle cx="950" cy="80" r="60" fill="#fff" opacity="0.04"/>
+  <circle cx="1100" cy="40" r="30" fill="#fff" opacity="0.05"/>
+  <circle cx="300" cy="100" r="20" fill="#fff" opacity="0.03"/>
+  <circle cx="700" cy="50" r="50" fill="#fff" opacity="0.03"/>
+  <!-- Small decorative elements -->
+  <rect x="80" y="200" width="8" height="8" rx="2" fill="#fff" opacity="0.08" transform="rotate(45 84 204)"/>
+  <rect x="500" y="40" width="6" height="6" rx="1.5" fill="#fff" opacity="0.1" transform="rotate(30 503 43)"/>
+  <rect x="850" y="220" width="10" height="10" rx="2.5" fill="#fff" opacity="0.07" transform="rotate(15 855 225)"/>
+</svg>
